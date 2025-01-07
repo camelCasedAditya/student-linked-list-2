@@ -15,34 +15,29 @@ void deleteR(int studentID, Node*& head, Node* current, Node* previous);
 Node* head = NULL;
 
 int main() {
+  deleteR(123, head, head, NULL);
   // Add each student to linked list and print out the linked list
   Student* one = new Student();
-  cout << "a" << endl;
   int oneID = 123;
   one->setStudentID(oneID);
-  cout << "b" << endl;
   addR(one, head, head);
-  cout << "c" << endl;
   print(head);
-  cout << "1" << endl;
 
   Student* two = new Student();
   int twoID = 256;
   two->setStudentID(twoID);
   addR(two, head, head);
   print(head);
-  cout << "2" << endl;
 
   Student* three = new Student();
-  int threeID = 980;
+  int threeID = 130;
   three->setStudentID(threeID);
   addR(three, head, head);
   print(head);
-  cout << "3" << endl;
+  cout << "" << endl;
 
   // Delete one of the students from the linked list
   deleteR(two->getStudentID(), head, head, NULL);
-  cout << "4" << endl;
   print(head);
 
   return 0;
@@ -68,11 +63,28 @@ void addR(Student* newStudent, Node*& head, Node* current) {
   if (head == NULL) {
     head = new Node();
     head->setValue(newStudent);
+    cout << "0" << endl;
+    return;
+  }
+  else if (head->getValue()->getStudentID() > newStudent->getStudentID()) {
+    Node* temp = head;
+    head = new Node();
+    head->setValue(newStudent);
+    head->setNext(temp);
+    return;
+  }
+  else if (current->getNext() != NULL && current->getNext()->getValue()->getStudentID() > newStudent->getStudentID()) {
+    Node* node = new Node();
+    node->setValue(newStudent);
+    node->setNext(current->getNext());
+    current->setNext(node);
+    return;
   }
   else if (current->getNext() == NULL) {
     Node* node = new Node();
     node->setValue(newStudent);
     current->setNext(node);
+    return;
   }
   else {
     addR(newStudent, head, current->getNext());
@@ -91,7 +103,6 @@ void deleteR(int studentID, Node*& head, Node* current, Node* previous) {
     cout << "deleted" << endl;
     return;
   }
-  cout << current->getValue()->getStudentID() << endl;
   deleteR(studentID, head, current->getNext(), current);
   return;
 }
