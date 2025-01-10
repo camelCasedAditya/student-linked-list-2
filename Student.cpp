@@ -10,7 +10,7 @@ Student::Student() {
   studentID = 0;
   GPA = 0.0;
 }
-
+// Functions to set and get user first and last name
 void Student::setFirstName(char* newFirstName) {
   strcpy(firstName, newFirstName);
 }
@@ -34,6 +34,7 @@ int Student::getStudentID() {
   return studentID;
 }
 
+// Functions to get and set student objects gpa
 void Student::setGPA(float newGPA) {
   GPA = newGPA;
 }

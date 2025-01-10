@@ -1,3 +1,11 @@
+/*
+Aditya Chandrashekaran
+1/9/2025
+Program to store students in a linked list.
+Allows the user to create and delete students. 
+Also the user can print out the list or get an average of all students gpa
+*/
+
 #include <iostream>
 #include "Node.h"
 #include "Student.h"
@@ -17,50 +25,11 @@ float averageGPA(Node* head, float total, float count);
 Node* head = NULL;
 
 int main() {
-  // deleteR(123, head, head, NULL);
-  // // Add each student to linked list and print out the linked list
-  // Student* one = new Student();
-  // int oneID = 123;
-  // one->setStudentID(oneID);
-  // char name[100] = "Aditya";
-  // one->setFirstName(strdup(name));
-  // strcpy(name, "Chandran");
-  // one->setLastName(strdup(name));
-  // one->setGPA(3.45);
-  // addR(one, head, head);
-  // print(head);
-
-  // Student* two = new Student();
-  // int twoID = 256;
-  // two->setStudentID(twoID);
-  // char name1[100] = "Aditya";
-  // two->setFirstName(strdup(name1));
-  // strcpy(name1, "Chandran");
-  // two->setLastName(strdup(name1));
-  // two->setGPA(4.2);
-  // addR(two, head, head);
-  // print(head);
-
-  // Student* three = new Student();
-  // int threeID = 130;
-  // three->setStudentID(threeID);
-  // char name2[100] = "Aditya";
-  // three->setFirstName(strdup(name2));
-  // strcpy(name2, "Chandran");
-  // three->setLastName(strdup(name2));
-  // three->setGPA(2.75);
-  // addR(three, head, head);
-  // print(head);
-  // cout << "" << endl;
-  // float average = averageGPA(head, 0.0, 0.0);
-  // cout << "Average: " << average << endl;
-
-  // // Delete one of the students from the linked list
-  // deleteR(two->getStudentID(), head, head, NULL);
-  // print(head);
+  // Boolean to keep program running
   bool running = true;
 
   while (running == true) {
+    // Gets user input on what command they want to do
     char input[100];
     cout << "Enter one of the following commands:" << endl;
     cout << "ADD (to add a student)" << endl; 
@@ -70,10 +39,15 @@ int main() {
     cout << "QUIT (to quit the program)" << endl << endl;
     cin >> input;
     cout << "" << endl;
+
+    // User wants to add a student
     if (strcmp(input, "ADD") == 0) {
+
+      // Create student object
       Student* newStudent = new Student();
       char addInput[100];
 
+      // Get user input for student attributes
       cout << "Enter the first name: " << endl;
       cin >> addInput;
       newStudent->setFirstName(strdup(addInput));
@@ -90,26 +64,33 @@ int main() {
       float floatInput = 0.0;
       cout << "Enter the GPA" << endl;
       cin >> floatInput;
-      cout << "INPUT: " << fixed << std::setprecision(2) << floatInput << endl;
-      // cout << type(floatInput) << endl;
       newStudent->setGPA(floatInput);
 
+      // Add the new student object to the linked list
       addR(newStudent, head, head);
     }
+    // User wants to delete a student
     else if (strcmp(input, "DELETE") == 0) {
+      // Get user input on id of the student they want to delete and calls the delete function
       int studentID = -1;
       cout << "Enter the id of the student who you want to delete: " << endl;
       cin >> studentID;
       deleteR(studentID, head, head, NULL);
     }
+    // User calls the print command
     else if (strcmp(input, "PRINT") == 0) {
+      // Calls the print function and passes in head of the linked list
       print(head);
     }
+    // User calls average command
     else if (strcmp(input, "AVERAGE") == 0) {
+      // Calls the average function and prints it out
       float average = averageGPA(head, 0.0, 0.0);
       cout << "Average GPA: " << average << endl;
     }
+    // User wants to quit
     else if (strcmp(input, "QUIT") == 0) {
+      // Sets the running variable to false, ending the program
       running = false;
     }
     cout << "" << endl;
@@ -118,12 +99,16 @@ int main() {
   return 0;
 }
 
+// Function to add a node to the linked list
 void addR(Student* newStudent, Node*& head, Node* current) {
+  // If the head is null we create a new node with the student and make that node the head.
   if (head == NULL) {
     head = new Node();
     head->setValue(newStudent);
     return;
   }
+  // If the id of the student stored in head is greater than the id of the new student we make a new node with the new student as head.
+  // Then the next node of head is the original head node.
   else if (head->getValue()->getStudentID() > newStudent->getStudentID()) {
     Node* temp = head;
     head = new Node();
@@ -131,6 +116,7 @@ void addR(Student* newStudent, Node*& head, Node* current) {
     head->setNext(temp);
     return;
   }
+  // If the next node's value in the linked list is greater than the student id of the new student then a new node is added inserted between the next node and the current node
   else if (current->getNext() != NULL && current->getNext()->getValue()->getStudentID() > newStudent->getStudentID()) {
     Node* node = new Node();
     node->setValue(newStudent);
@@ -138,53 +124,67 @@ void addR(Student* newStudent, Node*& head, Node* current) {
     current->setNext(node);
     return;
   }
+  // If we get to the end of the linked list we add the new node with the new student to the end of the list
   else if (current->getNext() == NULL) {
     Node* node = new Node();
     node->setValue(newStudent);
     current->setNext(node);
     return;
   }
+  // If none of the conditions are met we call function again with the next node
   else {
     addR(newStudent, head, current->getNext());
     return;
   }
 }
 
+// function to delete a node from the linked list based on inputted student id.
 void deleteR(int studentID, Node*& head, Node* current, Node* previous) {
+  // If the head is null we exit the function since there is nothing to delete
   if (head == NULL) {
     return;
   }
+  // If the current node is null this means we have gotten to the end of the linked list without finding a node that has a student with the inputted id
   else if (current == NULL) {
     return;
   }
+  // If the inputted id and student id match on a node we delete the node and connect the previous node to the next node
   else if (current->getValue()->getStudentID() == studentID) {
     previous->setNext(current->getNext());
     delete current;
     return;
   }
+  // If no conditions are met the function is called with the next node
   deleteR(studentID, head, current->getNext(), current);
   return;
 }
 
 // function to print items in the linked list
 void print(Node* next) {
+  // Heading of the list
   if (next == head) {
     cout << "STUDENT LIST: " << endl;
   }
- if (next != NULL) {
+  // for every node in the linked list we print out all the attribute of the student stored in it
+  if (next != NULL) {
     cout << next->getValue()->getFirstName() << ", " << next->getValue()->getLastName() << ", " << next->getValue()->getStudentID() << ", " << setprecision(2) << next->getValue()->getGPA() << endl;
+    // calls the print function on the next node
     print(next->getNext());
   }
 }
 
+// Function to calculate the average gpa in the linked list
 float averageGPA(Node* head, float total, float counter) {
+  // If the head is null this means the list is empty so a average of 0 is returned
   if (head == NULL) {
     return 0;
   }
+  // If we get to the end of the list we calculate the average with the running total and count
   else if (head->getNext() == NULL) {
     float average = (total+head->getValue()->getGPA())/(counter+1.0);
     return average;
   }
+  // Else we update the running total and count and call the function again with the updated total and count
   else {
     counter = counter + 1;
     total = total + head->getValue()->getGPA();
